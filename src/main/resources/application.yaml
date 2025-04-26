@@ -27,3 +27,8 @@ spring:
         config:
           default:
             loggerLevel: full
+
+application:
+  client:
+    customer:
+      url: http://localhost:8081
