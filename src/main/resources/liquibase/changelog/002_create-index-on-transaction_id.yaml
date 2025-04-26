@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002_create-index-on-transaction_id
+      author: Ali Aghayev
+      changes:
+        - createIndex:
+            indexName: idx_transaction_id
+            tableName: transactions
+            columns:
+              - column:
+                  name: transaction_id

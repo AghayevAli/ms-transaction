@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001_create-transactions-table
+      author: Ali Aghayev
+      changes:
+        - createTable:
+            tableName: transactions
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: transaction_id
+                  type: uuid
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: transaction_type
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: decimal
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP(3)
+                  defaultValueComputed: now()
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP(3)
+                  defaultValueComputed: now()
+            remarks: This is the table to store transactions related to customers with various types such as PURCHASE, TOP-UP, REFUND.
