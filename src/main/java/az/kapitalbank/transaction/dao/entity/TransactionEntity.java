@@ -46,4 +46,6 @@ public class TransactionEntity extends BaseEntity {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "referenced_transaction_id")
+    private UUID referencedTransactionId;
 }

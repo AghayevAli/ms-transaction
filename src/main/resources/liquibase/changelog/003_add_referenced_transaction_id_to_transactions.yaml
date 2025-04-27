@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003_add-referenced-transaction-id-to-transactions
+      author: Ali Aghayev
+      changes:
+        - addColumn:
+            tableName: transactions
+            columns:
+              - column:
+                  name: referenced_transaction_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+            remarks: This column references another transaction, e.g., for refunds or reversals.

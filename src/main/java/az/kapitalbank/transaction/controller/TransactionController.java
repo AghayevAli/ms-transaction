@@ -1,5 +1,8 @@
 package az.kapitalbank.transaction.controller;
 
+import az.kapitalbank.transaction.model.dto.TransactionPurchaseRequestDto;
+import az.kapitalbank.transaction.model.dto.TransactionRefundRequestDto;
+import az.kapitalbank.transaction.model.dto.TransactionResponseDto;
 import az.kapitalbank.transaction.model.dto.TransactionTopUpRequestDto;
 import az.kapitalbank.transaction.service.TransactionService;
 import jakarta.validation.Valid;
@@ -19,10 +22,25 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/top-up")
-    public ResponseEntity<Void> createCustomer(@RequestHeader("Customer-Id") Long customerId,
-                                               @Valid @RequestBody TransactionTopUpRequestDto request) {
-        transactionService.topUpBalance(customerId, request);
+    public ResponseEntity<TransactionResponseDto> createCustomer(@RequestHeader("Customer-Id") Long customerId,
+                                                                 @Valid @RequestBody
+                                                                 TransactionTopUpRequestDto request) {
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(transactionService.topUpBalance(customerId, request));
+    }
+
+    @PostMapping("/purchase")
+    public ResponseEntity<TransactionResponseDto> purchase(@RequestHeader("Customer-Id") Long customerId,
+                                                           @Valid @RequestBody TransactionPurchaseRequestDto request) {
+
+        return ResponseEntity.ok(transactionService.purchase(customerId, request));
+    }
+
+    @PostMapping("/refund")
+    public ResponseEntity<TransactionResponseDto> refund(@RequestHeader("Customer-Id") Long customerId,
+                                                         @Valid @RequestBody TransactionRefundRequestDto request) {
+
+
+        return ResponseEntity.ok(transactionService.partialRefund(customerId, request));
     }
 }
