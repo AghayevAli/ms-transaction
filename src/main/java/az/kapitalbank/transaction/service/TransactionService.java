@@ -34,6 +34,7 @@ public class TransactionService {
 
     final TransactionRepository transactionRepository;
     final CustomerClient customerClient;
+    final TransactionMapper transactionMapper;
 
     /**
      * Synchronous implementation for simplicity.
@@ -47,7 +48,7 @@ public class TransactionService {
         log.info("Starting top-up for customerId={}, amount={}", customerId, request.getAmount());
 
         TransactionEntity transactionEntity =
-                TransactionMapper.INSTANCE.toTransactionEntity(customerId, request);
+                transactionMapper.toTransactionEntity(customerId, request);
         transactionRepository.save(transactionEntity);
         log.debug("TransactionEntity saved: transactionId={}, customerId={}, amount={}",
                 transactionEntity.getTransactionId(), customerId, request.getAmount());
@@ -79,7 +80,7 @@ public class TransactionService {
         log.info("Starting purchase for customerId={}, amount={}", customerId, request.getAmount());
 
         TransactionEntity transactionEntity =
-                TransactionMapper.INSTANCE.toTransactionEntity(customerId, request);
+                transactionMapper.toTransactionEntity(customerId, request);
         transactionRepository.save(transactionEntity);
         log.debug("TransactionEntity saved: transactionId={}, customerId={}, amount={}",
                 transactionEntity.getTransactionId(), customerId, request.getAmount());
@@ -123,7 +124,7 @@ public class TransactionService {
     public TransactionResponseDto partialRefund(Long customerId, TransactionRefundRequestDto request) {
         log.info("Starting partial refund for customerId={}, amount={}", customerId, request.getAmount());
 
-        TransactionEntity refundTransaction = TransactionMapper.INSTANCE.toTransactionEntity(customerId, request);
+        TransactionEntity refundTransaction = transactionMapper.toTransactionEntity(customerId, request);
         transactionRepository.save(refundTransaction);
         log.debug("Saved refund transaction: transactionId={}, customerId={}, amount={}",
                 refundTransaction.getTransactionId(), customerId, request.getAmount());

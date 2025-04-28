@@ -1,5 +1,7 @@
 package az.kapitalbank.transaction.common;
 
+import static az.kapitalbank.transaction.model.enums.TransactionType.PURCHASE;
+
 import az.kapitalbank.transaction.client.customer.model.BalanceChangeRequest;
 import az.kapitalbank.transaction.dao.entity.TransactionEntity;
 import az.kapitalbank.transaction.model.dto.TransactionPurchaseRequestDto;
@@ -49,8 +51,9 @@ public interface TestConstants {
     TransactionEntity TRANSACTION_ENTITY_STATUS_COMPLETED = TransactionEntity.builder()
             .transactionId(TRANSACTION_ID)
             .customerId(CUSTOMER_ID)
-            .transactionType(TransactionType.TOP_UP)
+            .transactionType(PURCHASE)
             .status(TransactionStatus.COMPLETED)
+            .amount(BigDecimal.valueOf(100))
             .build();
 
     BalanceChangeRequest BALANCE_CHANGE_REQUEST = BalanceChangeRequest.builder()
@@ -59,5 +62,13 @@ public interface TestConstants {
 
     TransactionTopUpRequestDto TRANSACTION_TOP_UP_REQUEST_DTO = TransactionTopUpRequestDto.builder()
             .amount(BigDecimal.valueOf(10))
+            .build();
+
+    TransactionEntity TRANSACTION_ENTITY_BALANCE_30 = TransactionEntity.builder()
+            .transactionId(UUID.randomUUID())
+            .customerId(CUSTOMER_ID)
+            .amount(BigDecimal.valueOf(30))
+            .transactionType(PURCHASE)
+            .status(TransactionStatus.COMPLETED)
             .build();
 }

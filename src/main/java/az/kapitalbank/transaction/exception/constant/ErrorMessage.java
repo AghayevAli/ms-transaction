@@ -14,6 +14,6 @@ public final class ErrorMessage {
             "Total refunded amount exceeds original transaction amount";
 
     public static final String TRANSACTION_NOT_FOUND_MESSAGE =
-            "Transaction with ID: [{}] not found";
+            "Transaction with ID: [{0}] not found";
 
 }

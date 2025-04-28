@@ -7,12 +7,9 @@ import az.kapitalbank.transaction.model.dto.TransactionTopUpRequestDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, imports = java.util.UUID.class)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, imports = java.util.UUID.class)
 public interface TransactionMapper {
-
-    TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
 
     @Mapping(target = "transactionId", expression = "java(UUID.randomUUID())")
     @Mapping(target = "customerId", source = "customerId")
