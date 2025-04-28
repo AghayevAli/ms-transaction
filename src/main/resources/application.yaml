@@ -31,4 +31,4 @@ spring:
 application:
   client:
     customer:
-      url: http://localhost:8081
+      url: http://ms-customer:8080

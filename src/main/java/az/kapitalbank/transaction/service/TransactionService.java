@@ -3,6 +3,7 @@ package az.kapitalbank.transaction.service;
 import static az.kapitalbank.transaction.exception.constant.ErrorMessage.INVALID_ORIGINAL_TRANSACTION_MESSAGE;
 import static az.kapitalbank.transaction.exception.constant.ErrorMessage.REFUND_AMOUNT_EXCEEDS_ORIGINAL_MESSAGE;
 import static az.kapitalbank.transaction.exception.constant.ErrorMessage.TOTAL_REFUND_EXCEEDS_ORIGINAL_MESSAGE;
+import static az.kapitalbank.transaction.exception.constant.ErrorMessage.TRANSACTION_NOT_FOUND_MESSAGE;
 import static az.kapitalbank.transaction.model.enums.TransactionStatus.COMPLETED;
 
 import az.kapitalbank.transaction.client.customer.CustomerClient;
@@ -12,6 +13,7 @@ import az.kapitalbank.transaction.dao.repository.TransactionRepository;
 import az.kapitalbank.transaction.exception.InvalidOriginalTransactionException;
 import az.kapitalbank.transaction.exception.RefundAmountExceedsOriginalException;
 import az.kapitalbank.transaction.exception.TotalRefundExceedsOriginalException;
+import az.kapitalbank.transaction.exception.TransactionNotFoundException;
 import az.kapitalbank.transaction.mapper.TransactionMapper;
 import az.kapitalbank.transaction.model.dto.TransactionPurchaseRequestDto;
 import az.kapitalbank.transaction.model.dto.TransactionRefundRequestDto;
@@ -19,6 +21,7 @@ import az.kapitalbank.transaction.model.dto.TransactionResponseDto;
 import az.kapitalbank.transaction.model.dto.TransactionTopUpRequestDto;
 import az.kapitalbank.transaction.model.enums.TransactionStatus;
 import az.kapitalbank.transaction.model.enums.TransactionType;
+import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,6 +119,7 @@ public class TransactionService {
                 status);
     }
 
+    @Transactional
     public TransactionResponseDto partialRefund(Long customerId, TransactionRefundRequestDto request) {
         log.info("Starting partial refund for customerId={}, amount={}", customerId, request.getAmount());
 
@@ -126,9 +130,9 @@ public class TransactionService {
 
         try {
             TransactionEntity originalTransaction =
-                    transactionRepository.findByTransactionId(request.getTransactionId())
-                            .orElseThrow(() -> new RuntimeException(
-                                    "Transaction not found for id: " + request.getTransactionId()));
+                    transactionRepository.findByTransactionIdForUpdate(request.getTransactionId())
+                            .orElseThrow(() -> TransactionNotFoundException.of(TRANSACTION_NOT_FOUND_MESSAGE,
+                                    request.getTransactionId()));
 
             validateOriginalTransaction(originalTransaction, request.getAmount());
 
@@ -147,8 +151,8 @@ public class TransactionService {
     }
 
     private void validateOriginalTransaction(TransactionEntity transaction, BigDecimal refundAmount) {
-        if (!COMPLETED.equals(transaction.getStatus()) ||
-                !TransactionType.PURCHASE.equals(transaction.getTransactionType())) {
+        if (!COMPLETED.equals(transaction.getStatus())
+                || !TransactionType.PURCHASE.equals(transaction.getTransactionType())) {
             throw InvalidOriginalTransactionException.of(INVALID_ORIGINAL_TRANSACTION_MESSAGE);
         }
 

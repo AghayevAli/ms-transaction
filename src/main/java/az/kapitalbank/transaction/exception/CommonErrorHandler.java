@@ -1,6 +1,7 @@
 package az.kapitalbank.transaction.exception;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import az.kapitalbank.transaction.exception.model.CommonErrorResponse;
 import java.util.Optional;
@@ -20,12 +21,12 @@ public class CommonErrorHandler {
         HttpStatus httpStatus = this.httpStatus(ex.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
         addErrorLog(ex.getErrorCode(), ex.getMessage());
         CommonErrorResponse errorResponse = new CommonErrorResponse(ex.getErrorCode(), ex.getMessage());
-        return new ResponseEntity(errorResponse, httpStatus);
+        return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(InvalidOriginalTransactionException.class)
-    public CommonErrorResponse handleCustomerNotFound(InvalidOriginalTransactionException ex) {
+    public CommonErrorResponse handleInvalidOriginalTransaction(InvalidOriginalTransactionException ex) {
         addErrorLog(ex.getErrorCode(), ex.getMessage());
         return new CommonErrorResponse(
                 ex.getErrorCode(),
@@ -34,7 +35,7 @@ public class CommonErrorHandler {
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(RefundAmountExceedsOriginalException.class)
-    public CommonErrorResponse handleCustomerNotFound(RefundAmountExceedsOriginalException ex) {
+    public CommonErrorResponse handleRefundAmoundExceedsOriginal(RefundAmountExceedsOriginalException ex) {
         addErrorLog(ex.getErrorCode(), ex.getMessage());
         return new CommonErrorResponse(
                 ex.getErrorCode(),
@@ -43,7 +44,16 @@ public class CommonErrorHandler {
 
     @ResponseStatus(BAD_REQUEST)
     @ExceptionHandler(TotalRefundExceedsOriginalException.class)
-    public CommonErrorResponse handleCustomerNotFound(TotalRefundExceedsOriginalException ex) {
+    public CommonErrorResponse handleTotalRefundExceedsOriginal(TotalRefundExceedsOriginalException ex) {
+        addErrorLog(ex.getErrorCode(), ex.getMessage());
+        return new CommonErrorResponse(
+                ex.getErrorCode(),
+                ex.getMessage());
+    }
+
+    @ResponseStatus(NOT_FOUND)
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public CommonErrorResponse handleTransactionNotFound(TransactionNotFoundException ex) {
         addErrorLog(ex.getErrorCode(), ex.getMessage());
         return new CommonErrorResponse(
                 ex.getErrorCode(),
@@ -51,7 +61,7 @@ public class CommonErrorHandler {
     }
 
     protected HttpStatus httpStatus(int httpStatus, HttpStatus defaultHttpStatus) {
-        return (HttpStatus) Optional.ofNullable(HttpStatus.resolve(httpStatus)).orElse(defaultHttpStatus);
+        return Optional.ofNullable(HttpStatus.resolve(httpStatus)).orElse(defaultHttpStatus);
     }
 
     private static void addErrorLog(String errorCode, String errorMessage) {

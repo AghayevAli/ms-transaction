@@ -40,7 +40,6 @@ public class TransactionController {
     public ResponseEntity<TransactionResponseDto> refund(@RequestHeader("Customer-Id") Long customerId,
                                                          @Valid @RequestBody TransactionRefundRequestDto request) {
 
-
         return ResponseEntity.ok(transactionService.partialRefund(customerId, request));
     }
 }
